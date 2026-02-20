@@ -96,7 +96,7 @@ fun CoinListItemPreview() {
     CryptoTrackerTheme() {
         CoinListItem(
             modifier = Modifier.background(
-                MaterialTheme.colorScheme.primaryContainer
+                MaterialTheme.colorScheme.background
             ),
             uiCoin = previewCoin.toUICoin(),
         )
