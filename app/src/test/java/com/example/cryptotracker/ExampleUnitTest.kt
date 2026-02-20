@@ -1,4 +1,4 @@
-package com.plcoding.cryptotracker
+package com.example.cryptotracker
 
 import org.junit.Test
 

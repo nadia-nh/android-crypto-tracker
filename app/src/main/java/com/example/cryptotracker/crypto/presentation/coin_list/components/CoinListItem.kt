@@ -1,4 +1,4 @@
-package com.plcoding.cryptotracker.crypto.presentation.coin_list.components
+package com.example.cryptotracker.crypto.presentation.coin_list.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -24,10 +24,10 @@ import androidx.compose.ui.tooling.preview.PreviewDynamicColors
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.plcoding.cryptotracker.crypto.domain.Coin
-import com.plcoding.cryptotracker.crypto.presentation.models.UICoin
-import com.plcoding.cryptotracker.crypto.presentation.models.toUICoin
-import com.plcoding.cryptotracker.ui.theme.CryptoTrackerTheme
+import com.example.cryptotracker.crypto.domain.Coin
+import com.example.cryptotracker.crypto.presentation.models.UICoin
+import com.example.cryptotracker.crypto.presentation.models.toUICoin
+import com.example.cryptotracker.ui.theme.CryptoTrackerTheme
 
 @Composable
 fun CoinListItem(
