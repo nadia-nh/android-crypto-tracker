@@ -1,9 +1,17 @@
+import java.io.FileInputStream
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.kotlin.serialization)
 }
 
+val localProperties = Properties()
+val localPropertiesFile: File? = rootProject.file("local.properties")
+if (localPropertiesFile?.exists() == true) {
+    localProperties.load(FileInputStream(localPropertiesFile))
+}
 
 android {
     namespace = "com.example.cryptotracker"
@@ -29,6 +37,13 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+
+            buildConfigField("String", "BASE_URL", "\"https://api.coincap.io/v3/\"")
+            buildConfigField("String", "API_KEY", "\"${localProperties.getProperty("API_KEY", "")}\"")
+        }
+        debug {
+            buildConfigField("String", "BASE_URL", "\"https://api.coincap.io/v3/\"")
+            buildConfigField("String", "API_KEY", "\"${localProperties.getProperty("API_KEY", "")}\"")
         }
     }
     compileOptions {
