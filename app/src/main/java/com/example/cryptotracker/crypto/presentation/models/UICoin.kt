@@ -34,6 +34,9 @@ fun Coin.toUICoin(): UICoin =
         iconRes = getDrawableIdForCoin(symbol)
     )
 
+fun List<Coin?>.toUICoins(): List<UICoin> =
+    mapNotNull { it?.toUICoin() }
+
 private fun Double.toDisplayableNumber(): DisplayableNumber {
     val formatter = NumberFormat.getNumberInstance(Locale.getDefault()).apply {
         maximumFractionDigits = 2
