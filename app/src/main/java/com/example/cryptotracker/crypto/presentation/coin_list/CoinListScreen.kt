@@ -38,23 +38,8 @@ import kotlinx.coroutines.withContext
 fun CoinListScreen (
     modifier: Modifier = Modifier,
     state: CoinListState,
-    events: Flow<CoinListEvent> = emptyFlow(),
 )
 {
-    val context = LocalContext.current
-    val lifecycleOwner = LocalLifecycleOwner.current
-    LaunchedEffect(key1 = lifecycleOwner.lifecycle) {
-        lifecycleOwner.lifecycle.repeatOnLifecycle(
-            Lifecycle.State.STARTED) {
-            // Ensure events don't get lost
-            withContext(Dispatchers.Main.immediate) {
-                events.collect { event ->
-                    handleEvent(event, context)
-                }
-            }
-        }
-    }
-
     if (state.isLoading) {
         Box(
             modifier = Modifier.fillMaxSize(),
@@ -77,20 +62,6 @@ fun CoinListScreen (
                 )
                 HorizontalDivider()
             }
-        }
-    }
-}
-
-private fun handleEvent(
-    event: CoinListEvent,
-    context: Context
-) {
-    when (event) {
-        is CoinListEvent.Error -> {
-            val message = event.error.toString(context)
-            Toast
-                .makeText(context, message, Toast.LENGTH_SHORT)
-                .show()
         }
     }
 }
