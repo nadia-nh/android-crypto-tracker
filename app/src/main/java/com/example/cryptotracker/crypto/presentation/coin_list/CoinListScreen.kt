@@ -38,6 +38,7 @@ import kotlinx.coroutines.withContext
 fun CoinListScreen (
     modifier: Modifier = Modifier,
     state: CoinListState,
+    onAction: (CoinListAction) -> Unit = {}
 )
 {
     if (state.isLoading) {
@@ -58,7 +59,7 @@ fun CoinListScreen (
                 CoinListItem(
                     modifier = Modifier.fillMaxWidth(),
                     uiCoin = coin,
-                    onItemClick = { },
+                    onItemClick = { onAction(CoinListAction.onCoinClick(coin)) },
                 )
                 HorizontalDivider()
             }
