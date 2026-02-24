@@ -36,6 +36,7 @@ import com.example.cryptotracker.crypto.presentation.coin_list.CoinListState
 import com.example.cryptotracker.crypto.presentation.coin_list.components.previewCoin
 import com.example.cryptotracker.crypto.presentation.models.toUICoin
 import com.example.cryptotracker.ui.theme.CryptoTrackerTheme
+import com.example.cryptotracker.ui.theme.greenBackground
 
 @Composable
 fun CoinDetailScreen(
@@ -115,13 +116,23 @@ fun CoinDetailScreen(
                     contentColor = contentColor
                 )
 
-                val isPositive = coin.changePercent24Hs.value > 0
+                val isPositive = coin.changePercent24Hs.value > 0.0
                 val iconId = if (isPositive) {
                     R.drawable.trending
                 } else {
                     R.drawable.trending_down
                 }
-                val text = if (isPositive) "+" else ""
+                val text = if (isPositive) {
+                    "+" + coin.changePercent24Hs.formatted + "%"
+                } else {
+                    "" + coin.changePercent24Hs.formatted + "%"
+                }
+                val color = if (isPositive) {
+                    if (isSystemInDarkTheme()) Color.Green else greenBackground
+                } else {
+                    MaterialTheme.colorScheme.error
+                }
+
                 InfoCard(
                     title = stringResource(
                         id = R.string.change_last_24h
@@ -129,8 +140,8 @@ fun CoinDetailScreen(
                     icon = ImageVector.vectorResource(
                         id = iconId
                     ),
-                    text = text + coin.changePercent24Hs.formatted + "%",
-                    contentColor = contentColor
+                    text = text,
+                    contentColor = color
                 )
             }
         }
