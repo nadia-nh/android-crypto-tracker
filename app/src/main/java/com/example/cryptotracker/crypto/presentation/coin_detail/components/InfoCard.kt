@@ -1,5 +1,6 @@
 package com.example.cryptotracker.crypto.presentation.coin_detail.components
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
@@ -63,25 +64,40 @@ fun InfoCard(
             contentColor = contentColor
         )
     ) {
-        Icon(
-            imageVector = icon,
-            contentDescription = title,
-            modifier = Modifier
-                .align(Alignment.CenterHorizontally)
-                .size(75.dp)
-                .padding(top = 16.dp),
-            tint = contentColor
-        )
+        AnimatedContent(
+            targetState = icon,
+            modifier = Modifier.align(
+                Alignment.CenterHorizontally
+            ),
+            label = "Icon Animation"
+        ) { icon ->
+            Icon(
+                imageVector = icon,
+                contentDescription = title,
+                modifier = Modifier
+                    .size(75.dp)
+                    .padding(top = 16.dp),
+                tint = contentColor
+            )
+        }
 
         Spacer(modifier = Modifier.size(8.dp))
-        Text(
-            text = text,
-            style = textStyle,
-            modifier = Modifier
-                .align(Alignment.CenterHorizontally)
-                .padding(horizontal = 16.dp),
-            color = contentColor
-        )
+        AnimatedContent(
+            targetState = text,
+            modifier = Modifier.align(
+                Alignment.CenterHorizontally
+            ),
+            label = "Text Animation"
+        ) { text ->
+            Text(
+                text = text,
+                style = textStyle,
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(horizontal = 16.dp),
+                color = contentColor
+            )
+        }
 
         Spacer(modifier = Modifier.size(8.dp))
         Text(
