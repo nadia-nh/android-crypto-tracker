@@ -7,9 +7,13 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -43,23 +47,25 @@ fun LineChart(
             )
         }
 
-        // X-coordinate
+        // X-coordinate vals
         val horizontalPaddingPx = style.horizontalPadding.roundToPx()
         val xAxisLabelSpacingPx = style.xAxisLabelSpacing.roundToPx()
 
-        val maxXLabelWidth = xLabelTextLayoutResults
-            .maxOfOrNull { it.size.width } ?: 0
         val viewportRightX = size.width
         val viewportLeftX = 2 * horizontalPaddingPx.toFloat()
 
-        // Y-coordinate
+        val maxXLabelWidth = xLabelTextLayoutResults
+            .maxOfOrNull { it.size.width } ?: 0
+
+        // Y-coordinate vals
+        val minLabelSpacingPx = style.minYLabelSpacing.toPx()
         val verticalPaddingPx = style.verticalPadding.roundToPx()
 
-        val maxXLabelHeight = xLabelTextLayoutResults
-            .maxOfOrNull { it.size.height } ?: 0
         val maxXLabelLineCount = xLabelTextLayoutResults
             .maxOfOrNull { it.lineCount } ?: 0
 
+        val maxXLabelHeight = xLabelTextLayoutResults
+            .maxOfOrNull { it.size.height } ?: 0
         val xLabelLineHeight = if (maxXLabelLineCount > 0) {
             maxXLabelHeight / maxXLabelLineCount
         } else {
@@ -71,6 +77,9 @@ fun LineChart(
         val viewportTopY = verticalPaddingPx + xLabelLineHeight + 10f
         val viewportBottomY = viewportTopY + viewportHeightPx
 
+
+
+        // ----- Define the viewport and start drawing -----
         val viewport = Rect(
             top = viewportTopY,
             left = viewportLeftX,
@@ -82,6 +91,36 @@ fun LineChart(
             color = Color.Green,
             topLeft = viewport.topLeft,
             size = viewport.size,
+        )
+
+        drawXAxisLabels(
+            drawScope = this,
+            labelTextLayoutResults = xLabelTextLayoutResults,
+            viewport = viewport,
+            maxXLabelWidth = maxXLabelWidth,
+            xAxisLabelSpacingPx = xAxisLabelSpacingPx,
+            )
+    }
+}
+
+fun drawXAxisLabels(
+    drawScope: DrawScope,
+    labelTextLayoutResults: List<TextLayoutResult>,
+    viewport: Rect,
+    maxXLabelWidth: Int,
+    xAxisLabelSpacingPx: Int,
+) {
+    val xLabelWidth = maxXLabelWidth + xAxisLabelSpacingPx
+    val xAxisLabelXPos = viewport.left + xAxisLabelSpacingPx / 2f
+    val xAxisLabelYPos = viewport.bottom + xAxisLabelSpacingPx
+
+    labelTextLayoutResults.forEachIndexed { index, result ->
+        drawScope.drawText(
+            textLayoutResult = result,
+            topLeft = Offset(
+                x = xAxisLabelXPos + xLabelWidth * index,
+                y = xAxisLabelYPos
+            )
         )
     }
 }
@@ -103,7 +142,7 @@ fun LineChartPreview() {
                 x = it.dateTime.hour.toFloat(),
                 y = it.priceUsd.toFloat(),
                 xLabel = DateTimeFormatter
-                    .ofPattern("ha M/d")
+                    .ofPattern("ha\nM/d")
                     .format(it.dateTime)
             )
         }
@@ -114,6 +153,6 @@ fun LineChartPreview() {
             .height(300.dp)
             .background(Color.White),
         dataPoints = dataPoints,
-        visibleDataPointsIndices = IntRange(0, 15)
+        visibleDataPointsIndices = IntRange(0, 15),
     )
 }
