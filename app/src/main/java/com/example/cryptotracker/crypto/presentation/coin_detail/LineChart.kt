@@ -87,12 +87,7 @@ fun LineChart(
             right = viewportRightX
         )
 
-        drawRect(
-            color = Color.Green,
-            topLeft = viewport.topLeft,
-            size = viewport.size,
-        )
-
+        drawBackground(drawScope = this, viewport = viewport)
         drawXAxisLabels(
             drawScope = this,
             labelTextLayoutResults = xLabelTextLayoutResults,
@@ -103,6 +98,16 @@ fun LineChart(
     }
 }
 
+fun drawBackground(
+    drawScope: DrawScope,
+    viewport: Rect
+) {
+    drawScope.drawRect(
+        color = Color.Green,
+        topLeft = viewport.topLeft,
+        size = viewport.size,
+    )
+}
 fun drawXAxisLabels(
     drawScope: DrawScope,
     labelTextLayoutResults: List<TextLayoutResult>,
