@@ -12,6 +12,7 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.text.TextLayoutResult
+import androidx.compose.ui.text.TextMeasurer
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.rememberTextMeasurer
@@ -77,7 +78,10 @@ fun LineChart(
         val viewportTopY = verticalPaddingPx + xLabelLineHeightPx + 10f
         val viewportBottomY = viewportTopY + viewportHeightPx
 
-
+        val minYValue = visibleDataPoints
+            .minOfOrNull { it.y } ?: 0f
+        val maxYValue = visibleDataPoints
+            .maxOfOrNull { it.y } ?: 0f
 
         // ----- Define the viewport and start drawing -----
         val viewport = Rect(
@@ -94,6 +98,15 @@ fun LineChart(
             viewport = viewport,
             maxXLabelWidthPx = maxXLabelWidthPx,
             xAxisLabelSpacingPx = xAxisLabelSpacingPx)
+        drawYAxisLabels(
+            drawScope = this,
+            viewport = viewport,
+            measurer = measurer,
+            minLabelSpacingPx = minLabelSpacingPx,
+            xLabelLineHeight = xLabelLineHeightPx,
+            minYValue = minYValue,
+            maxYValue = maxYValue
+        )
     }
 }
 
@@ -127,6 +140,52 @@ fun drawXAxisLabels(
             )
         )
     }
+}
+
+fun drawYAxisLabels(
+    drawScope: DrawScope,
+    viewport: Rect,
+    measurer: TextMeasurer,
+    minLabelSpacingPx: Float,
+    xLabelLineHeight: Float,
+    minYValue: Float,
+    maxYValue: Float
+) {
+    val yLabelMaxHeightPx = viewport.height + xLabelLineHeight
+    val labelCount = (yLabelMaxHeightPx / (xLabelLineHeight + minLabelSpacingPx)).toInt()
+    val valueIncrement = if (labelCount > 0) {
+        (maxYValue - minYValue) / labelCount
+    } else {
+        return
+    }
+
+    val yLabels = (0..labelCount).map {
+        ValueLabel(
+            value = minYValue + valueIncrement * it,
+            unit = "$"
+        )
+    }
+
+    val yLabelTextLayoutResult = yLabels.map {
+        measurer.measure(
+            text = it.formatted(),
+            style = TextStyle.Default.copy(textAlign = TextAlign.Center)
+        )
+    }
+
+    val yLabelHeightPx = xLabelLineHeight + minLabelSpacingPx
+    val yLabelXPos = viewport.left
+    val yLabelYPos = viewport.bottom - xLabelLineHeight
+    yLabelTextLayoutResult.forEachIndexed { index, result ->
+        drawScope.drawText(
+            textLayoutResult = result,
+            topLeft = Offset(
+                x = yLabelXPos,
+                y = yLabelYPos - (yLabelHeightPx * index)
+            )
+        )
+    }
+
 }
 
 @Preview
