@@ -85,8 +85,13 @@ fun LineChart(
             viewport = viewportWithXPadding,
             dataPoints = state.dataPoints,
             radius = state.dataPointRadius,
-            color = style.selectedColor
-        )
+            color = style.selectedColor)
+        drawPointLines(
+            drawScope = this,
+            viewport = viewportWithXPadding,
+            dataPoints = state.dataPoints,
+            lineWidth = state.dataPointLineWidth,
+            color = style.chartLineColor)
     }
 }
 
@@ -176,7 +181,7 @@ fun updateState(
     state.yAxisLabelBaseXPos = 0f
     state.yAxisLabelBaseYPos = -state.yAxisLabelHeightPx / 2
 
-    // Point values
+    // Point and line values
     state.dataPointRadius = 5f
     state.dataPoints = visibleDataPoints.mapIndexed { index, point ->
         // Map it to the [0, 1] range
@@ -188,6 +193,8 @@ fun updateState(
             xLabel = point.xLabel
         )
     }
+
+    state.dataPointLineWidth = 1.5f
 }
 
 fun drawBackground(
@@ -254,6 +261,28 @@ fun drawPoints(
                 x = viewport.left + dataPoint.x,
                 y = viewport.bottom + dataPoint.y
             )
+        )
+    }
+}
+
+fun drawPointLines(
+    drawScope: DrawScope,
+    viewport: Rect,
+    dataPoints: List<DataPoint>,
+    lineWidth: Float,
+    color: Color = Color.Red,
+) {
+    dataPoints.zipWithNext().forEach { (current, next) ->
+        drawScope.drawLine(
+            color = color,
+            start = Offset(
+                x = viewport.left + current.x,
+                y = viewport.bottom + current.y),
+            end = Offset(
+                x = viewport.left + next.x,
+                y = viewport.bottom + next.y
+            ),
+            strokeWidth = lineWidth
         )
     }
 }

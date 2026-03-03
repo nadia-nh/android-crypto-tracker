@@ -45,7 +45,8 @@ class LineChartState {
     var yAxisLabelBaseXPos: Float = 0f
     var yAxisLabelBaseYPos: Float = 0f
 
-    // Point values
-    var dataPointRadius: Float = 1f
+    // Point and line values
     var dataPoints: List<DataPoint> = emptyList()
+    var dataPointRadius: Float = 1f
+    var dataPointLineWidth: Float = 1f
 }
