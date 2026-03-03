@@ -117,6 +117,92 @@ fun LineChart(
     }
 }
 
+fun updateState(
+    drawScope: DrawScope,
+    state: LineChartState,
+    measurer: TextMeasurer,
+    textStyle: TextStyle,
+    style: ChartStyle = ChartStyle(),
+    visibleDataPoints: List<DataPoint> = emptyList()
+) {
+    // Convert styles values from Dp to Px
+    with(drawScope) {
+        state.horizontalPaddingPx = style.horizontalPadding.toPx()
+        state.verticalPaddingPx = style.verticalPadding.toPx()
+        state.xAxisLabelSpacingPx = style.xAxisLabelSpacing.toPx()
+        state.yAxisLabelMinSpacingPx = style.minYLabelSpacing.toPx()
+    }
+
+    state.xAxisLabelTextLayoutResults = visibleDataPoints.map {
+        measurer.measure(
+            text = it.xLabel,
+            style = textStyle.copy(textAlign = TextAlign.Center)
+        )
+    }
+
+    // Values needed for the viewport
+    state.xAxisMaxLineCount = state.xAxisLabelTextLayoutResults
+        .maxOfOrNull { it.lineCount } ?: 0
+    state.xAxisLabelMaxHeightPx = state.xAxisLabelTextLayoutResults
+        .maxOfOrNull { it.size.height } ?: 0
+    state.xAxisLabelHeightPx = if (state.xAxisMaxLineCount > 0) {
+        state.xAxisLabelMaxHeightPx / state.xAxisMaxLineCount.toFloat()
+    } else {
+        0f
+    }
+    state.viewportHeightPx = drawScope.size.height - (
+            state.xAxisLabelMaxHeightPx +
+                    2 * state.verticalPaddingPx +
+                    state.xAxisLabelMaxHeightPx +
+                    state.xAxisLabelSpacingPx)
+
+    // Viewport values
+    state.viewportLeftX = 2 * state.horizontalPaddingPx
+    state.viewportTopY = state.verticalPaddingPx + state.xAxisLabelMaxHeightPx + 10f
+    state.viewportRightX = drawScope.size.width
+    state.viewportBottomY = state.viewportTopY + state.viewportHeightPx
+
+
+    // X-axis label values
+    state.xAxisLabelMaxWidthPx = state.xAxisLabelTextLayoutResults
+        .maxOfOrNull { it.size.width } ?: 0
+
+    state.xAxisLabelWidthPx = state.xAxisLabelMaxWidthPx + state.xAxisLabelSpacingPx
+    state.xAxisLabelBaseXPos = state.xAxisLabelSpacingPx / 2f
+    state.xAxisLabelBaseYPos = state.xAxisLabelSpacingPx
+
+    // Y-axis label values
+    state.yAxisMinValue = visibleDataPoints.minOfOrNull { it.y } ?: 0f
+    state.yAxisMaxValue = visibleDataPoints.maxOfOrNull { it.y } ?: 0f
+
+    state.yAxisLabelMaxHeightPx = state.viewportHeightPx + state.xAxisLabelHeightPx
+    state.yAxisItemCount = (state.yAxisLabelMaxHeightPx /
+            (state.xAxisLabelHeightPx + state.yAxisLabelMinSpacingPx)).toInt()
+    state.yAxisValueIncrement = if (state.yAxisItemCount > 0) {
+        (state.yAxisMaxValue - state.yAxisMinValue) / state.yAxisItemCount
+    } else {
+        0f
+    }
+
+    state.yAxisValueLabels = (0..state.yAxisItemCount).map {
+        ValueLabel(
+            value = state.yAxisMinValue + state.yAxisValueIncrement * it,
+            unit = "$"
+        )
+    }
+
+    state.yAxisLabelTextLayoutResult = state.yAxisValueLabels.map {
+        measurer.measure(
+            text = it.formatted(),
+            style = textStyle.copy(textAlign = TextAlign.Center)
+        )
+    }
+
+    state.yAxisLabelHeightPx = state.xAxisLabelHeightPx + state.yAxisLabelMinSpacingPx
+    state.yAxisLabelBaseXPos = 0f
+    state.yAxisLabelBaseYPos = -state.yAxisLabelHeightPx / 2
+}
+
 fun drawBackground(
     drawScope: DrawScope,
     viewport: Rect,
