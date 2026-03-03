@@ -35,6 +35,7 @@ class LineChartState {
     var yAxisItemCount: Int = 0
     var yAxisMinValue: Float = 0f
     var yAxisMaxValue: Float = 0f
+    var yAxisValueRange: Float = 0f
     var yAxisValueIncrement: Float = 0f
 
     var yAxisLabelMinSpacingPx: Float = 0f
@@ -43,4 +44,8 @@ class LineChartState {
     var yAxisLabelHeightPx: Float = 0f
     var yAxisLabelBaseXPos: Float = 0f
     var yAxisLabelBaseYPos: Float = 0f
+
+    // Point values
+    var dataPointRadius: Float = 1f
+    var dataPoints: List<DataPoint> = emptyList()
 }

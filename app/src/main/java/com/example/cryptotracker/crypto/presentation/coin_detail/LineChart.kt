@@ -79,6 +79,13 @@ fun LineChart(
             yAxisLabelHeightPx = state.yAxisLabelHeightPx,
             yAxisLabelBaseXPos = state.yAxisLabelBaseXPos,
             yAxisLabelBaseYPos = state.yAxisLabelBaseYPos)
+        drawPoints(
+            drawScope = this,
+            viewport = viewportWithXPadding,
+            dataPoints = state.dataPoints,
+            radius = state.dataPointRadius,
+            color = style.selectedColor
+        )
     }
 }
 
@@ -143,8 +150,9 @@ fun updateState(
     state.yAxisLabelMaxHeightPx = state.viewportHeightPx + state.xAxisLabelHeightPx
     state.yAxisItemCount = (state.yAxisLabelMaxHeightPx /
             (state.xAxisLabelHeightPx + state.yAxisLabelMinSpacingPx)).toInt()
+    state.yAxisValueRange = state.yAxisMaxValue - state.yAxisMinValue
     state.yAxisValueIncrement = if (state.yAxisItemCount > 0) {
-        (state.yAxisMaxValue - state.yAxisMinValue) / state.yAxisItemCount
+        state.yAxisValueRange / state.yAxisItemCount
     } else {
         0f
     }
@@ -166,6 +174,19 @@ fun updateState(
     state.yAxisLabelHeightPx = state.xAxisLabelHeightPx + state.yAxisLabelMinSpacingPx
     state.yAxisLabelBaseXPos = 0f
     state.yAxisLabelBaseYPos = -state.yAxisLabelHeightPx / 2
+
+    // Point values
+    state.dataPointRadius = 5f
+    state.dataPoints = visibleDataPoints.mapIndexed { index, point ->
+        // Map it to the [0, 1] range
+        val yInAxisValueRange = (point.y - state.yAxisMinValue) / state.yAxisValueRange
+
+        DataPoint(
+            x = index * state.xAxisLabelWidthPx + state.xAxisLabelWidthPx / 2f,
+            y = -yInAxisValueRange * state.viewportHeightPx - state.dataPointRadius / 2,
+            xLabel = point.xLabel
+        )
+    }
 }
 
 fun drawBackground(
@@ -212,6 +233,25 @@ fun drawYAxisLabels(
             topLeft = Offset(
                 x = viewport.left + yAxisLabelBaseXPos,
                 y = viewport.bottom + yAxisLabelBaseYPos - (yAxisLabelHeightPx * index)
+            )
+        )
+    }
+}
+
+fun drawPoints(
+    drawScope: DrawScope,
+    viewport: Rect,
+    dataPoints: List<DataPoint>,
+    radius: Float,
+    color: Color = Color.Red,
+) {
+    dataPoints.forEach { dataPoint ->
+        drawScope.drawCircle(
+            color = color,
+            radius = radius,
+            center = Offset(
+                x = viewport.left + dataPoint.x,
+                y = viewport.bottom + dataPoint.y
             )
         )
     }
