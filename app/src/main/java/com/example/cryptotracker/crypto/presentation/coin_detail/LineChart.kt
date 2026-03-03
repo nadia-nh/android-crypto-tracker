@@ -20,6 +20,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.cryptotracker.crypto.domain.CoinPrice
+import com.example.cryptotracker.ui.theme.CryptoTrackerTheme
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import kotlin.random.Random
@@ -279,12 +280,20 @@ fun LineChartPreview() {
             )
         }
     }
-    LineChart(
-        modifier = Modifier
-            .width(700.dp)
-            .height(300.dp)
-            .background(Color.White),
-        dataPoints = dataPoints,
-        visibleDataPointsIndices = IntRange(0, 15),
-    )
+
+    CryptoTrackerTheme() {
+        LineChart(
+            modifier = Modifier
+                .width(800.dp)
+                .height(300.dp)
+                .background(Color.White),
+            dataPoints = dataPoints,
+            visibleDataPointsIndices = IntRange(0, 15),
+            style = ChartStyle(
+                chartLineColor = Color.LightGray,
+                unselectedColor = Color.White,
+                selectedColor = Color.DarkGray
+            )
+        )
+    }
 }
