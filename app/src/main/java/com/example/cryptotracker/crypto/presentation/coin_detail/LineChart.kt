@@ -202,7 +202,7 @@ fun drawBackground(
     viewport: Rect,
 ) {
     drawScope.drawRect(
-        color = Color.Green,
+        color = Color.Green.copy(alpha = 0.5f),
         topLeft = viewport.topLeft,
         size = viewport.size,
     )
