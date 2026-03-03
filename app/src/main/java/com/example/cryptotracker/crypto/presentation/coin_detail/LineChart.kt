@@ -91,11 +91,18 @@ fun LineChart(
             right = viewportRightX
         )
 
-        drawBackground(drawScope = this, viewport = viewport)
+        val viewportWithXPadding = viewport.copy(
+            left = viewport.left + horizontalPaddingPx * 10,
+            right = viewport.right + horizontalPaddingPx * 10
+        )
+
+        drawBackground(
+            drawScope = this,
+            viewport = viewportWithXPadding)
         drawXAxisLabels(
             drawScope = this,
             labelTextLayoutResults = xLabelTextLayoutResults,
-            viewport = viewport,
+            viewport = viewportWithXPadding,
             maxXLabelWidthPx = maxXLabelWidthPx,
             xAxisLabelSpacingPx = xAxisLabelSpacingPx)
         drawYAxisLabels(
@@ -112,7 +119,7 @@ fun LineChart(
 
 fun drawBackground(
     drawScope: DrawScope,
-    viewport: Rect
+    viewport: Rect,
 ) {
     drawScope.drawRect(
         color = Color.Green,
@@ -125,7 +132,7 @@ fun drawXAxisLabels(
     labelTextLayoutResults: List<TextLayoutResult>,
     viewport: Rect,
     maxXLabelWidthPx: Int,
-    xAxisLabelSpacingPx: Float,
+    xAxisLabelSpacingPx: Float
 ) {
     val xLabelWidthPx = maxXLabelWidthPx + xAxisLabelSpacingPx
     val xAxisLabelXPos = viewport.left + xAxisLabelSpacingPx / 2f
