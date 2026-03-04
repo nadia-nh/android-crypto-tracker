@@ -10,7 +10,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextMeasurer
 import androidx.compose.ui.text.TextStyle
@@ -87,7 +90,7 @@ fun LineChart(
             dataPoints = state.dataPoints,
             radius = state.dataPointRadius,
             color = style.selectedColor)
-        drawPointLines(
+        drawPointCurves(
             drawScope = this,
             viewport = viewportWithXPadding,
             dataPoints = state.dataPoints,
@@ -102,8 +105,7 @@ fun LineChart(
                 xAxisLabelWidthPx = state.xAxisLabelWidthPx,
                 xAxisLabelBaseXPos = state.xAxisLabelBaseXPos,
                 lineWidth = style.helperLinesThicknessPx,
-                color = style.unselectedColor
-            )
+                color = style.unselectedColor)
 
             drawHelperLinesVertical(
                 drawScope = this,
@@ -112,8 +114,7 @@ fun LineChart(
                 yAxisLabelHeightPx = state.yAxisLabelHeightPx,
                 yAxisLabelBaseYPos = state.yAxisLabelBaseYPos,
                 lineWidth = style.helperLinesThicknessPx,
-                color = style.unselectedColor
-            )
+                color = style.unselectedColor)
         }
     }
 }
@@ -295,6 +296,8 @@ fun drawPointLines(
     lineWidth: Float,
     color: Color = Color.Red,
 ) {
+    if (dataPoints.isEmpty()) return
+
     dataPoints.zipWithNext().forEach { (current, next) ->
         drawScope.drawLine(
             color = color,
@@ -310,6 +313,56 @@ fun drawPointLines(
     }
 }
 
+fun drawPointCurves(
+    drawScope: DrawScope,
+    viewport: Rect,
+    dataPoints: List<DataPoint>,
+    lineWidth: Float,
+    color: Color = Color.Red,
+) {
+    if (dataPoints.isEmpty()) return
+
+    val controlPointsFirst = mutableListOf<DataPoint>()
+    val controlPointsSecond = mutableListOf<DataPoint>()
+
+    for (i in 0..<dataPoints.size - 1) {
+        val p0 = dataPoints[i]
+        val p1 = dataPoints[i + 1]
+
+        val x = viewport.left + (p1.x  + p0.x) / 2f
+        val y1 = viewport.bottom + p0.y
+        val y2 = viewport.bottom + p1.y
+
+        controlPointsFirst.add(DataPoint(x, y1, ""))
+        controlPointsSecond.add(DataPoint(x, y2, ""))
+    }
+
+    val bezierLinePath = Path().apply {
+        moveTo(
+            x = viewport.left + dataPoints[0].x,
+            y = viewport.bottom + dataPoints[0].y
+        )
+
+        for (i in 0..<dataPoints.size - 1) {
+            cubicTo(
+                x1 = controlPointsFirst[i].x,
+                y1 = controlPointsFirst[i].y,
+                x2 = controlPointsSecond[i].x,
+                y2 = controlPointsSecond[i].y,
+                x3 = viewport.left + dataPoints[i + 1].x,
+                y3 = viewport.bottom + dataPoints[i + 1].y)
+        }
+    }
+
+    drawScope.drawPath(
+        path = bezierLinePath,
+        color = color,
+        style = Stroke(
+            width = lineWidth,
+            cap = StrokeCap.Round
+        )
+    )
+}
 
 fun drawHelperLinesHorizontal(
     drawScope: DrawScope,
