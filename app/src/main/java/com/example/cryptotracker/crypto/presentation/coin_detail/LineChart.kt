@@ -31,6 +31,7 @@ fun LineChart(
     dataPoints: List<DataPoint> = emptyList(),
     visibleDataPointsIndices: IntRange= IntRange(0, 0),
     style: ChartStyle = ChartStyle(),
+    showHelperLines: Boolean = true
 ) {
     val visibleDataPoints = remember(dataPoints, visibleDataPointsIndices) {
         dataPoints.slice(visibleDataPointsIndices)
@@ -92,6 +93,28 @@ fun LineChart(
             dataPoints = state.dataPoints,
             lineWidth = state.dataPointLineWidth,
             color = style.chartLineColor)
+
+        if (showHelperLines) {
+            drawHelperLinesHorizontal(
+                drawScope = this,
+                viewport = viewportWithXPadding,
+                textLayoutResults = state.xAxisLabelTextLayoutResults,
+                xAxisLabelWidthPx = state.xAxisLabelWidthPx,
+                xAxisLabelBaseXPos = state.xAxisLabelBaseXPos,
+                lineWidth = style.helperLinesThicknessPx,
+                color = style.unselectedColor
+            )
+
+            drawHelperLinesVertical(
+                drawScope = this,
+                viewport = viewport,
+                textLayoutResults = state.yAxisLabelTextLayoutResult,
+                yAxisLabelHeightPx = state.yAxisLabelHeightPx,
+                yAxisLabelBaseYPos = state.yAxisLabelBaseYPos,
+                lineWidth = style.helperLinesThicknessPx,
+                color = style.unselectedColor
+            )
+        }
     }
 }
 
@@ -281,6 +304,61 @@ fun drawPointLines(
             end = Offset(
                 x = viewport.left + next.x,
                 y = viewport.bottom + next.y
+            ),
+            strokeWidth = lineWidth
+        )
+    }
+}
+
+
+fun drawHelperLinesHorizontal(
+    drawScope: DrawScope,
+    viewport: Rect,
+    textLayoutResults: List<TextLayoutResult>,
+    xAxisLabelWidthPx: Float,
+    xAxisLabelBaseXPos: Float,
+    lineWidth: Float,
+    color: Color = Color.Red,
+) {
+    textLayoutResults.forEachIndexed { index, result ->
+        val halfWidth = result.size.width / 2f
+        val xValue = viewport.left + xAxisLabelBaseXPos + halfWidth
+        drawScope.drawLine(
+            color = color,
+            start = Offset(
+                x = xValue + xAxisLabelWidthPx * index,
+                y = viewport.bottom
+            ),
+            end = Offset(
+                x = xValue + xAxisLabelWidthPx * index,
+                y = viewport.top
+            ),
+            strokeWidth = lineWidth
+        )
+    }
+}
+
+fun drawHelperLinesVertical(
+    drawScope: DrawScope,
+    viewport: Rect,
+    textLayoutResults: List<TextLayoutResult>,
+    yAxisLabelHeightPx: Float,
+    yAxisLabelBaseYPos: Float,
+    lineWidth: Float,
+    color: Color = Color.Red,
+) {
+    textLayoutResults.forEachIndexed { index, result ->
+        val halfHeight = result.size.height.toFloat() / 2f
+        val yValue = viewport.bottom + yAxisLabelBaseYPos + halfHeight
+        drawScope.drawLine(
+            color = color,
+            start = Offset(
+                x = viewport.left,
+                y = yValue - (yAxisLabelHeightPx * index)
+            ),
+            end = Offset(
+                x = viewport.right,
+                y = yValue - (yAxisLabelHeightPx * index)
             ),
             strokeWidth = lineWidth
         )
