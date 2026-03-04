@@ -226,7 +226,7 @@ fun drawBackground(
     viewport: Rect,
 ) {
     drawScope.drawRect(
-        color = Color.Green.copy(alpha = 0.5f),
+        color = Color.Red.copy(alpha = 0.3f),
         topLeft = viewport.topLeft,
         size = viewport.size,
     )
@@ -441,7 +441,7 @@ fun LineChartPreview() {
         }
     }
 
-    CryptoTrackerTheme() {
+    CryptoTrackerTheme {
         LineChart(
             modifier = Modifier
                 .width(800.dp)
@@ -450,9 +450,9 @@ fun LineChartPreview() {
             dataPoints = dataPoints,
             visibleDataPointsIndices = IntRange(0, 15),
             style = ChartStyle(
-                chartLineColor = Color.LightGray,
+                chartLineColor = Color.Magenta.copy(alpha = 0.6f),
                 unselectedColor = Color.White,
-                selectedColor = Color.DarkGray
+                selectedColor = Color.Magenta
             )
         )
     }
