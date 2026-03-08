@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -13,6 +14,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Divider
+import androidx.compose.material3.DividerDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -37,6 +41,8 @@ import com.example.cryptotracker.crypto.presentation.coin_list.components.previe
 import com.example.cryptotracker.crypto.presentation.models.toUICoin
 import com.example.cryptotracker.ui.theme.CryptoTrackerTheme
 import com.example.cryptotracker.ui.theme.greenBackground
+import kotlin.math.max
+import kotlin.math.min
 
 @Composable
 fun CoinDetailScreen(
@@ -144,6 +150,27 @@ fun CoinDetailScreen(
                     contentColor = color
                 )
             }
+
+            HorizontalDivider(Modifier, DividerDefaults.Thickness, DividerDefaults.color)
+
+            val style = ChartStyle(
+                chartLineColor = MaterialTheme.colorScheme.primary,
+                unselectedColor = MaterialTheme.colorScheme.secondary.copy(
+                    alpha = 0.3f
+                ),
+                selectedColor = MaterialTheme.colorScheme.primary,
+            )
+            val rangeStart = 0
+            val rangeEnd = coin.coinPriceHistory.lastIndex
+            LineChart(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .aspectRatio(16 / 9f)
+                    .padding(top = 16.dp),
+                dataPoints = coin.coinPriceHistory,
+                visibleDataPointsIndices = rangeStart..rangeEnd,
+                style = style
+            )
         }
     }
 }
