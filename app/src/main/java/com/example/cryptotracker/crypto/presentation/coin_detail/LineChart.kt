@@ -289,30 +289,6 @@ fun drawPoints(
     }
 }
 
-fun drawPointLines(
-    drawScope: DrawScope,
-    viewport: Rect,
-    dataPoints: List<DataPoint>,
-    lineWidth: Float,
-    color: Color = Color.Red,
-) {
-    if (dataPoints.isEmpty()) return
-
-    dataPoints.zipWithNext().forEach { (current, next) ->
-        drawScope.drawLine(
-            color = color,
-            start = Offset(
-                x = viewport.left + current.x,
-                y = viewport.bottom + current.y),
-            end = Offset(
-                x = viewport.left + next.x,
-                y = viewport.bottom + next.y
-            ),
-            strokeWidth = lineWidth
-        )
-    }
-}
-
 fun drawPointCurves(
     drawScope: DrawScope,
     viewport: Rect,
