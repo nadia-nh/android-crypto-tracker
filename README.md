@@ -11,8 +11,8 @@ The app displays real-time cryptocurrency prices using the CoinCap API, with a l
 Clone the repo:
 
 ```
-git clone https://github.com/philipplackner/CryptoTracker.git
-cd CryptoTracker
+git clone https://github.com/nadia-nh/android-crypto-tracker.git
+cd android-crypto-tracker
 ```
 
 Open the project in Android Studio and run it on an emulator or device.
