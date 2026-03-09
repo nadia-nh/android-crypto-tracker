@@ -53,7 +53,7 @@ class CoinListViewModel(
         viewModelScope.launch {
             coinDataSource.getCoinHistory(
                 coinId = uiCoin.id,
-                start = ZonedDateTime.now().minusDays(5),
+                start = ZonedDateTime.now().minusDays(2),
                 end = ZonedDateTime.now()
             )
             .onSuccess { history ->

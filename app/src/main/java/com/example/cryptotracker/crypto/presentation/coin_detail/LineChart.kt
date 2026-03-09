@@ -63,8 +63,8 @@ fun LineChart(
         )
 
         val viewportWithXPadding = viewport.copy(
-            left = viewport.left + state.horizontalPaddingPx * 10,
-            right = viewport.right + state.horizontalPaddingPx * 10
+            left = viewport.left + state.horizontalPaddingPx * 5,
+            right = viewport.right + state.horizontalPaddingPx * 5
         )
 
         drawBackground(
