@@ -61,3 +61,4 @@ Additional resources used:
 - [Initial data loading](https://www.youtube.com/watch?v=mNKQ9dc1knI)
 - [One time events in channels and shared flows](https://www.youtube.com/watch?v=njchj9d_Lf8)
 - [List-detail layout](https://www.youtube.com/watch?v=W3R_ETKMj0E)
+- [Drawing on a canvas in compose](https://www.youtube.com/watch?v=Eq1ZgoI_QPQ&t=719s)
